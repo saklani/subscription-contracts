@@ -28,11 +28,11 @@ contract Subscription is ERC5643, Ownable, Pausable {
         _maximumRenewalDuration = maximumRenewalDuration_;
     }
 
-    function pause() public onlyOwner {
+    function pause() public onlyOwner whenNotPaused {
         _pause();
     }
 
-    function unpause() public onlyOwner {
+    function unpause() public onlyOwner whenPaused {
         _unpause();
     }
 
@@ -56,7 +56,7 @@ contract Subscription is ERC5643, Ownable, Pausable {
         return durationUnits * _amount;
     }
 
-    function mint(address to, uint256 id) public {
+    function mint(address to, uint256 id) public whenNotPaused {
         _mint(to, id);
     }
 
@@ -64,5 +64,9 @@ contract Subscription is ERC5643, Ownable, Pausable {
         if (_exists(id)) {
             revert TokenAlreadyExists();
         }
+    }
+
+    function renewSubscription(uint256 tokenId, uint64 duration) public payable override whenNotPaused {
+        super.renewSubscription(tokenId, duration);
     }
 }

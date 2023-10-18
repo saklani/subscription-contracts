@@ -34,6 +34,7 @@ contract SubscriptionManager is Ownable, AutomationCompatibleInterface {
      */
     function issueSubcriptionNFT(uint256 id) external {
         _subscription.mint(msg.sender, id);
+
         _subscription.approve(address(this), id);
     }
 
