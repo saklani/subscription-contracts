@@ -57,13 +57,10 @@ contract Subscription is ERC5643, Ownable, Pausable {
     }
 
     function mint(address to, uint256 id) public whenNotPaused {
-        _mint(to, id);
-    }
-
-    function _beforeTokenTransfer(address from, address to, uint256 id) internal view override {
         if (_exists(id)) {
             revert TokenAlreadyExists();
         }
+        _mint(to, id);
     }
 
     function renewSubscription(uint256 tokenId, uint64 duration) public payable override whenNotPaused {

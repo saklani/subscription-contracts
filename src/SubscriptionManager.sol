@@ -7,10 +7,12 @@ import "./Subscription.sol";
 import "@chainlink/contracts/automation/interfaces/AutomationCompatibleInterface.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "solady/auth/Ownable.sol";
+import "";
 
 contract SubscriptionManager is Ownable, AutomationCompatibleInterface {
     bool[] private _tokenIds;
     Subscription private _subscription;
+    ERC6551
 
     constructor(address owner_) {
         _initializeOwner(owner_);
@@ -29,12 +31,12 @@ contract SubscriptionManager is Ownable, AutomationCompatibleInterface {
     /**
      * This function does two things - 
      * 1. Mint the subscription NFT to the sender
-     * 2. Approve this address to make future transaction on behalf of the
+     * 2. Approve this address to make future transaction on behalf of the NFT
+     * 3. Create the token-bounded account
      * @param id token id to be issued
      */
     function issueSubcriptionNFT(uint256 id) external {
         _subscription.mint(msg.sender, id);
-
         _subscription.approve(address(this), id);
     }
 
