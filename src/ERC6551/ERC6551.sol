@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/interfaces/IERC1271.sol";
 
 contract ERC6551 is IERC6551Account, IERC6551Executable, IERC1271, ERC165 {
+   
     receive() external payable override {}
 
     function token() external view override returns (uint256 chainId, address tokenContract, uint256 tokenId) {}
