@@ -26,8 +26,15 @@ contract SubscriptionManager is Ownable, AutomationCompatibleInterface {
 
     function performUpkeep(bytes calldata performData) external override {}
 
-    function issueSubcriptionNFT(address to, uint256 id) external {
-        _subscription.mint(to, id);
+    /**
+     * This function does two things - 
+     * 1. Mint the subscription NFT to the sender
+     * 2. Approve this address to make future transaction on behalf of the
+     * @param id token id to be issued
+     */
+    function issueSubcriptionNFT(uint256 id) external {
+        _subscription.mint(msg.sender, id);
+        _subscription.approve(address(this), id);
     }
 
     function cancel(uint256 id) public {

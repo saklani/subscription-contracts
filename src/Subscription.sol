@@ -6,7 +6,7 @@ import "@chainlink/contracts/automation/interfaces/AutomationCompatibleInterface
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "solady/auth/Ownable.sol";
 
-import "./ERC5643.sol";
+import "./ERC5643/ERC5643.sol";
 
 contract Subscription is ERC5643, Ownable, Pausable {
     uint256 private _amount;
@@ -56,7 +56,13 @@ contract Subscription is ERC5643, Ownable, Pausable {
         return durationUnits * _amount;
     }
 
-    function mint(address owner, uint256 tokenId) public {
-      
+    function mint(address to, uint256 id) public {
+        _mint(to, id);
+    }
+
+    function _beforeTokenTransfer(address from, address to, uint256 id) internal view override {
+        if (_exists(id)) {
+            revert TokenAlreadyExists();
+        }
     }
 }
