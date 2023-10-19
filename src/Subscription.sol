@@ -66,4 +66,6 @@ contract Subscription is ERC5643, Ownable, Pausable {
     function renewSubscription(uint256 tokenId, uint64 duration) public payable override whenNotPaused {
         super.renewSubscription(tokenId, duration);
     }
+
+    
 }
