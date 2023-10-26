@@ -6,9 +6,12 @@ import "solady/tokens/ERC20.sol";
 import "./IERC20.sol";
 
 contract ERC20S is ERC20 {
+    error CallerNotOwnerOrApproved();
 
-  
+    /// @notice Emitted when underlying token is wrapped
     event TokenWrapped(address from, uint256 amount);
+
+    /// @notice Emitted when underlying token is unwrapped
     event TokenUnwrapped(address to, uint256 amount);
 
     /// @notice Emitted when a subscription expiration changes
@@ -44,7 +47,6 @@ contract ERC20S is ERC20 {
     }
 
     function wrap(address from, uint256 amount) external {
-        
         _baseToken.transferFrom(from, address(this), amount);
         _mint(from, amount);
         emit TokenWrapped(from, amount);
@@ -59,24 +61,24 @@ contract ERC20S is ERC20 {
     function createSubscription(address from, address to, uint256 amount, uint64 duration) external {
         _callerOwnerOrApproved(from);
         transferFrom(from, to, amount);
-        _active[from][to] = true;
-        _expirations[from][to] += duration;
+        _active[to][from] = true;
+        _expirations[to][from] += duration;
         emit SubscriptionUpdate(from, to, amount, duration);
     }
 
     function renewSubscription(address from, address to, uint256 amount, uint64 duration) external {
-        uint64 expiration = _expirations[from][to];
+        uint64 expiration = _expirations[to][from];
         require(expiration > block.timestamp);
-        require(_active[from][to]);
+        require(_active[to][from]);
         _transfer(from, to, amount);
-        _expirations[from][to] += duration;
+        _expirations[to][from] += duration;
         emit SubscriptionUpdate(from, to, amount, expiration);
     }
 
     function cancelSubscription(address from, address to) external {
         _callerOwnerOrApproved(from);
-        if (_active[from][to]) {
-            _active[from][to] = false;
+        if (_active[to][from]) {
+            _active[to][from] = false;
             emit SubscriptionUpdate(from, to, 0, 0);
         }
     }
